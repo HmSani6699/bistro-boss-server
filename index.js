@@ -66,11 +66,12 @@ async function run() {
       res.send(result)
     })
 
-    app.delete('/carts/:id',async(req,res)=>{
-      const id=req.query.id;
-      const query = { _id:new ObjectId(id) };
-      const result = await cardsCollaction.deleteOne(query);
-      res.send(result)
+    app.delete('/cards/:id', async (req, res) => {
+      const id = req.query.id;
+      console.log(id);
+      // const query = { _id:new ObjectId(id) };
+      // const result = await cardsCollaction.deleteOne(query);
+      // res.send(result)
     })
 
 
