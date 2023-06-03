@@ -53,8 +53,8 @@ async function run() {
     //--------------------//
     app.post('/cards', async (req, res) => {
         const cards = req.body;
-        console.log(cards);
-        const result = await cardsCollaction.findOne(cards);
+        // console.log(cards);
+        const result = await cardsCollaction.insertOne(cards);
         res.send(result)
     })
 
