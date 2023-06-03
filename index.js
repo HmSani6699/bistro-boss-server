@@ -51,11 +51,19 @@ async function run() {
     //--------------------//
     //    CARDS COLLATION    //
     //--------------------//
+
+    app.get('/carts', async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await cardsCollaction.find(query).toArray();
+      res.send(result)
+    })
+
     app.post('/cards', async (req, res) => {
-        const cards = req.body;
-        // console.log(cards);
-        const result = await cardsCollaction.insertOne(cards);
-        res.send(result)
+      const cards = req.body;
+      // console.log(cards);
+      const result = await cardsCollaction.insertOne(cards);
+      res.send(result)
     })
 
 
