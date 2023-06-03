@@ -29,9 +29,10 @@ async function run() {
 
     const menuCollaction = client.db("bistroBossDB").collection("menu");
     const reviewCollaction = client.db("bistroBossDB").collection("review");
+    const cardsCollaction = client.db("bistroBossDB").collection("cards");
 
     //--------------------//
-    // Menu data//
+    //     MENU COLLATION  //
     //--------------------//
     app.get('/menu', async (req, res) => {
       const menu = await menuCollaction.find().toArray();
@@ -39,12 +40,24 @@ async function run() {
     })
 
     //--------------------//
-    // Review data//
+    //    REIEW COLLATION    //
     //--------------------//
     app.get('/review', async (req, res) => {
       const menu = await reviewCollaction.find().toArray();
       res.send(menu)
     })
+
+
+    //--------------------//
+    //    CARDS COLLATION    //
+    //--------------------//
+    app.post('/cards', async (req, res) => {
+        const cards = req.body;
+        console.log(cards);
+        const result = await cardsCollaction.findOne(cards);
+        res.send(result)
+    })
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
