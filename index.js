@@ -61,17 +61,15 @@ async function run() {
 
     app.post('/cards', async (req, res) => {
       const cards = req.body;
-      // console.log(cards);
       const result = await cardsCollaction.insertOne(cards);
       res.send(result)
     })
 
     app.delete('/cards/:id', async (req, res) => {
-      const id = req.query.id;
-      console.log(id);
-      // const query = { _id:new ObjectId(id) };
-      // const result = await cardsCollaction.deleteOne(query);
-      // res.send(result)
+      const id = req.params.id;
+      const query = { _id:new ObjectId(id) };
+      const result = await cardsCollaction.deleteOne(query);
+      res.send(result)
     })
 
 
