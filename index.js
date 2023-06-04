@@ -22,8 +22,9 @@ const client = new MongoClient(uri, {
   }
 });
 
-const verify = (req, res, next) => {
+const verifyJWT = (req, res, next) => {
   const authorization = req.headers.authorization;
+  console.log(27,authorization);
   if (!authorization) {
     return res.status(401).send({ error: true, message: 'unauthorizad access' })
   }
@@ -55,7 +56,6 @@ async function run() {
     //--------------------//
     app.post('/jwt', (req, res) => {
       const user = req.body;
-      console.log(47, req.headers.authorization);
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
       res.send({ token })
     })
@@ -117,8 +117,18 @@ async function run() {
     //    CARDS COLLATION    //
     //--------------------//
 
-    app.get('/carts', async (req, res) => {
+    app.get('/carts',verifyJWT, async (req, res) => {
       const email = req.query.email;
+
+      if(!email){
+        res.send([])
+      }
+
+      const decodedEmail=req.decoded.email;
+      if(email !== decodedEmail){
+        return res.status(401).send({ error: true, message: 'porbiddent access' })
+      }
+
       const query = { email: email };
       const result = await cardsCollaction.find(query).toArray();
       res.send(result)
