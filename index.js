@@ -5,7 +5,7 @@ require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const port = process.env.PORT || 5000;
-
+var jwt = require('jsonwebtoken');
 // Middleware
 app.use(cors())
 app.use(express.json());
@@ -35,6 +35,18 @@ async function run() {
 
 
     //--------------------//
+    // JWT //
+    //--------------------//
+    app.post('/jwt', (req, res) => {
+      const user = req.body;
+      const token = jwt.sign({
+        data: user
+      }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+      res.send(token)
+    })
+
+
+    //--------------------//
     //     USERS COLLATION  //
     //--------------------//
 
@@ -57,14 +69,14 @@ async function run() {
     app.patch('/users/admin/:id', async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) }
-      const updateDoc = {$set: {rol: `admin`},};
+      const updateDoc = { $set: { rol: `admin` }, };
       const result = await userCollaction.updateOne(filter, updateDoc);
       res.send(result);
     })
 
-    app.delete('/users/:id',async(req,res)=>{
+    app.delete('/users/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id:new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const result = await userCollaction.deleteOne(query);
       res.send(result)
     })
