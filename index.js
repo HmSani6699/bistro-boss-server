@@ -37,12 +37,16 @@ async function run() {
     //--------------------//
     //     USERS COLLATION  //
     //--------------------//
+
+    app.get('/users', async (req, res) => {
+      const result = await userCollaction.find().toArray();
+      res.send(result)
+    })
+
     app.post('/user', async (req, res) => {
       const user = req.body;
-      console.log(user);
       const query = { email: user.email };
       const existingUser = await userCollaction.findOne(query);
-      console.log(existingUser);
       if (existingUser) {
         return {}
       }
@@ -50,6 +54,17 @@ async function run() {
       res.send(result)
     })
 
+    app.patch('/users/admin/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const updateDoc = {
+        $set: {
+          rol: `admin`
+        },
+      };
+      const result = await userCollaction.updateOne(filter, updateDoc);
+      res.send(result);
+    })
 
     //--------------------//
     //     MENU COLLATION  //
