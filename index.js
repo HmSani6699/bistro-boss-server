@@ -27,9 +27,29 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+
+    const userCollaction = client.db("bistroBossDB").collection("user");
     const menuCollaction = client.db("bistroBossDB").collection("menu");
     const reviewCollaction = client.db("bistroBossDB").collection("review");
     const cardsCollaction = client.db("bistroBossDB").collection("cards");
+
+
+    //--------------------//
+    //     USERS COLLATION  //
+    //--------------------//
+    app.post('/user', async (req, res) => {
+      const user = req.body;
+      console.log(user);
+      const query = { email: user.email };
+      const existingUser = await userCollaction.findOne(query);
+      console.log(existingUser);
+      if (existingUser) {
+        return {}
+      }
+      const result = await userCollaction.insertOne(user);
+      res.send(result)
+    })
+
 
     //--------------------//
     //     MENU COLLATION  //
@@ -40,7 +60,7 @@ async function run() {
     })
 
     //--------------------//
-    //    REIEW COLLATION    //
+    //    REVIEW COLLATION    //
     //--------------------//
     app.get('/review', async (req, res) => {
       const menu = await reviewCollaction.find().toArray();
@@ -67,7 +87,7 @@ async function run() {
 
     app.delete('/cards/:id', async (req, res) => {
       const id = req.params.id;
-      const query = { _id:new ObjectId(id) };
+      const query = { _id: new ObjectId(id) };
       const result = await cardsCollaction.deleteOne(query);
       res.send(result)
     })
