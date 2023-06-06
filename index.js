@@ -70,7 +70,7 @@ async function run() {
     //     USERS COLLATION  //
     //--------------------//
 
-    app.get('/users', async (req, res) => {
+    app.get('/users',verifyJWT, async (req, res) => {
       const result = await userCollaction.find().toArray();
       res.send(result)
     })
