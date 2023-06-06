@@ -24,6 +24,7 @@ const client = new MongoClient(uri, {
 
 const verifyJWT = (req, res, next) => {
   const authorization = req.headers.authorization;
+  console.log({authorization});
   if (!authorization) {
     return res.status(401).send({ error: true, message: 'unauthorizad access' })
   }
@@ -60,7 +61,7 @@ async function run() {
     app.post('/jwt', (req, res) => {
       const user = req.body;
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
-      // console.log(token);
+      console.log(token);
       res.send({ token })
     })
 
@@ -124,12 +125,14 @@ async function run() {
     app.get('/carts', verifyJWT, async (req, res) => {
       const email = req.query.email;
 
+      console.log(req.headers.authorization);
+
       if (!email) {
         res.send([])
       }
 
       const decodedEmail = req.decoded.email;
-      console.log(131,decodedEmail);
+      console.log(131, decodedEmail, email);
       if (email !== decodedEmail) {
         return res.status(401).send({ error: true, message: 'forbiddent access' })
       }
