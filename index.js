@@ -24,12 +24,12 @@ const client = new MongoClient(uri, {
 
 const verifyJWT = (req, res, next) => {
   const authorization = req.headers.authorization;
-  console.log({ authorization });
+  console.log(27,{ authorization });
   if (!authorization) {
     return res.status(401).send({ error: true, message: 'unauthorizad access' })
   }
   const token = authorization.split(' ')[1];
-  console.log(token);
+  console.log(32,token);
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     console.log(err);
@@ -70,7 +70,18 @@ async function run() {
     //     USERS COLLATION  //
     //--------------------//
 
-    app.get('/users',verifyJWT, async (req, res) => {
+    const verifyAdmin = async (req, res, next) => {
+      const email = req.decoded.email;
+      const query = { email: email }
+      const user = await userCollaction.findOne(query);
+      console.log(77,user);
+      if (user?.rol !== 'admin') {
+        return res.status(403).send({ error: true, message: 'forbidden message' });
+      }
+      next();
+    }
+
+    app.get('/users',verifyJWT,verifyAdmin, async (req, res) => {
       const result = await userCollaction.find().toArray();
       res.send(result)
     })
