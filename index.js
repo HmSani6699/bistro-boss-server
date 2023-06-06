@@ -24,15 +24,18 @@ const client = new MongoClient(uri, {
 
 const verifyJWT = (req, res, next) => {
   const authorization = req.headers.authorization;
-  console.log(27,authorization);
   if (!authorization) {
     return res.status(401).send({ error: true, message: 'unauthorizad access' })
   }
-  const token = authorization.split(' ')[1]
+  const token = authorization.split(' ')[1];
+  console.log(token);
+
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    console.log(err);
     if (err) {
-      return res.status(401).send({ error: true, message: 'unauthorizad access' })
+      return res.status(401).send({ error: true, message: 'unauthorizad access 0000000' })
     }
+    // console.log(decoded);
     req.decoded = decoded;
     next()
   });
@@ -56,7 +59,8 @@ async function run() {
     //--------------------//
     app.post('/jwt', (req, res) => {
       const user = req.body;
-      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+      // console.log(token);
       res.send({ token })
     })
 
@@ -117,17 +121,19 @@ async function run() {
     //    CARDS COLLATION    //
     //--------------------//
 
-    app.get('/carts',verifyJWT, async (req, res) => {
+    app.get('/carts', verifyJWT, async (req, res) => {
       const email = req.query.email;
 
-      if(!email){
+      if (!email) {
         res.send([])
       }
 
-      const decodedEmail=req.decoded.email;
-      if(email !== decodedEmail){
-        return res.status(401).send({ error: true, message: 'porbiddent access' })
+      const decodedEmail = req.decoded.email;
+      console.log(131,decodedEmail);
+      if (email !== decodedEmail) {
+        return res.status(401).send({ error: true, message: 'forbiddent access' })
       }
+      console.log('ami vallo ');
 
       const query = { email: email };
       const result = await cardsCollaction.find(query).toArray();
