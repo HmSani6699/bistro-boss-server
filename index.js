@@ -24,7 +24,7 @@ const client = new MongoClient(uri, {
 
 const verifyJWT = (req, res, next) => {
   const authorization = req.headers.authorization;
-  console.log({authorization});
+  console.log({ authorization });
   if (!authorization) {
     return res.status(401).send({ error: true, message: 'unauthorizad access' })
   }
@@ -86,11 +86,16 @@ async function run() {
       res.send(result)
     })
 
-    app.get('/users/admin/:email',async(req,res)=>{
+    app.get('/users/admin/:email', verifyJWT, async (req, res) => {
       const email = req.params.email;
-      const query ={email:email}
+
+      if (email !== req.decoded.email) {
+        res.send({admin:false})
+      }
+
+      const query = { email: email }
       const user = await userCollaction.findOne(query);
-      const result = {admin:user?.rol==='admin'};
+      const result = { admin: user?.rol === 'admin' };
       res.send(result)
 
     })
